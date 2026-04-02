@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<title>Complaint History</title>
+
+<style>
+
+body{
+margin:0;
+font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+background:#f1f5f9;
+}
+
+/* sidebar */
+.sidebar{
+width:230px;
+height:100vh;
+background:#0f172a;
+color:white;
+padding-top:25px;
+position:fixed;
+}
+
+.sidebar h2{
+text-align:center;
+margin-bottom:35px;
+}
+
+.sidebar a{
+display:block;
+color:#cbd5f1;
+text-decoration:none;
+padding:13px 25px;
+font-size:15px;
+}
+
+.sidebar a:hover{
+background:#1e293b;
+}
+
+.active{
+background:#2563eb;
+color:white;
+border-radius:6px;
+margin:5px 12px;
+}
+
+/* main content */
+.page{
+margin-left:230px;
+padding:40px 60px;
+}
+
+/* heading */
+.page h1{
+font-size:38px;
+margin-bottom:8px;
+color:#0f172a;
+}
+
+.page p{
+color:#64748b;
+font-size:17px;
+margin-bottom:30px;
+}
+
+/* card */
+.card{
+background:white;
+padding:25px;
+border-radius:14px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+}
+
+/* table */
+table{
+width:100%;
+border-collapse:collapse;
+font-size:15px;
+}
+
+th{
+text-align:left;
+padding:14px;
+background:#f8fafc;
+color:#334155;
+font-weight:600;
+}
+
+td{
+padding:14px;
+border-top:1px solid #e2e8f0;
+color:#334155;
+vertical-align:top;
+}
+
+/* status badge */
+.status{
+padding:5px 12px;
+border-radius:20px;
+font-size:13px;
+font-weight:600;
+display:inline-block;
+}
+
+.pending{
+background:#fef3c7;
+color:#92400e;
+}
+
+.resolved{
+background:#dcfce7;
+color:#166534;
+}
+
+.high{
+color:#dc2626;
+font-weight:600;
+}
+
+.medium{
+color:#ca8a04;
+font-weight:600;
+}
+
+.low{
+color:#2563eb;
+font-weight:600;
+}
+
+/* reply box */
+.reply-box{
+background:#ecfeff;
+padding:10px;
+border-radius:8px;
+color:#075985;
+font-size:14px;
+max-width:300px;
+}
+
+.no-reply{
+color:#94a3b8;
+font-size:13px;
+}
+
+</style>
+
+</head>
+
+
+
+<body>
+
+<!-- sidebar -->
+
+<div class="sidebar">
+
+<h2>🏢 PAMS</h2>
+
+<div class="menu">
+
+<a href="{% url 'home' %}">
+<i class="fa-solid fa-house"></i> Dashboard
+</a>
+
+<a href="{% url 'rent' %}">
+<i class="fa-solid fa-credit-card"></i> Rent Payment
+</a>
+
+<a href="{% url 'maintenance' %}">
+<i class="fa-solid fa-screwdriver-wrench"></i> Maintenance
+</a>
+
+<a href="{% url 'complaints' %}">
+<i class="fa-solid fa-circle-exclamation"></i> Complaints
+</a>
+
+<a href="{% url 'complaint_list' %}" class="active">
+<i class="fa-solid fa-list"></i> Complaint History
+</a>
+
+<a href="{% url 'history' %}">
+<i class="fa-solid fa-clock-rotate-left"></i> Payment History
+</a>
+
+<a href="{% url 'profile' %}">
+<i class="fa-solid fa-user"></i> Profile
+</a>
+
+</div>
+
+</div>
+
+
+
+<!-- content -->
+
+<div class="page">
+
+<h1>Complaint History</h1>
+
+<p>Track the status of complaints you have submitted.</p>
+
+
+
+<div class="card">
+
+<table>
+
+<tr>
+
+<th>Date</th>
+
+<th>Category</th>
+
+<th>Priority</th>
+
+<th>Status</th>
+
+<th>Message</th>
+
+<th>Admin Reply</th>
+
+</tr>
+
+
+
+{% for complaint in complaints %}
+
+<tr>
+
+<td>{{ complaint.date }}</td>
+
+<td>{{ complaint.category }}</td>
+
+<td class="{{ complaint.priority|lower }}">
+{{ complaint.priority }}
+</td>
+
+<td>
+
+<span class="status {{ complaint.status|lower }}">
+{{ complaint.status }}
+</span>
+
+</td>
+
+<td>{{ complaint.message }}</td>
+
+<td>
+
+{% if complaint.reply %}
+
+<div class="reply-box">
+<i class="fa-solid fa-reply"></i>
+{{ complaint.reply }}
+</div>
+
+{% else %}
+
+<span class="no-reply">
+No reply yet
+</span>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+</div>
+
+
+
+</body>
+
+</html>

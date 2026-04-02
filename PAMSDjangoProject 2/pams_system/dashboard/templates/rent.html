@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<title>PAMS | Rent Payment</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+body{
+margin:0;
+font-family:'Inter',sans-serif;
+background:#f1f5f9;
+}
+
+/* sidebar */
+
+.sidebar{
+width:240px;
+height:100vh;
+background:linear-gradient(180deg,#0f172a,#1e293b);
+color:white;
+position:fixed;
+padding-top:25px;
+}
+
+.sidebar h2{
+text-align:center;
+margin-bottom:30px;
+}
+
+.sidebar a{
+display:block;
+color:#cbd5f1;
+text-decoration:none;
+padding:12px 25px;
+font-size:15px;
+}
+
+.sidebar a i{
+margin-right:10px;
+}
+
+.sidebar a:hover{
+background:#2563eb;
+color:white;
+}
+
+
+/* topbar */
+
+.topbar{
+margin-left:240px;
+height:70px;
+background:white;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 40px;
+box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+
+.title{
+font-size:20px;
+font-weight:600;
+}
+
+.user{
+background:#2563eb;
+color:white;
+width:35px;
+height:35px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+
+/* page */
+
+.page{
+margin-left:240px;
+padding:40px;
+display:flex;
+justify-content:center;
+}
+
+
+/* card */
+
+.card{
+width:420px;
+background:white;
+padding:30px;
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+}
+
+.card h3{
+margin-top:0;
+margin-bottom:20px;
+}
+
+
+/* form */
+
+label{
+display:block;
+margin-top:15px;
+font-size:14px;
+font-weight:500;
+}
+
+input, select{
+width:100%;
+padding:12px;
+margin-top:6px;
+border-radius:8px;
+border:1px solid #e2e8f0;
+font-size:14px;
+}
+
+
+/* payment buttons */
+
+.methods{
+display:flex;
+gap:10px;
+margin-top:10px;
+}
+
+.method{
+flex:1;
+padding:12px;
+border:2px solid #e2e8f0;
+border-radius:8px;
+text-align:center;
+cursor:pointer;
+transition:.2s;
+background:#f8fafc;
+}
+
+.method.active{
+border-color:#2563eb;
+background:#eff6ff;
+font-weight:600;
+}
+
+.method:hover{
+border-color:#2563eb;
+}
+
+
+/* button */
+
+button{
+width:100%;
+margin-top:20px;
+padding:12px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:8px;
+font-size:15px;
+font-weight:600;
+cursor:pointer;
+}
+
+button:hover{
+background:#1d4ed8;
+}
+
+</style>
+
+</head>
+
+
+
+<body>
+
+
+<div class="sidebar">
+
+<h2>🏢 PAMS</h2>
+
+<a href="{% url 'home' %}">
+<i class="fa fa-home"></i> Dashboard
+</a>
+
+<a href="{% url 'rent' %}">
+<i class="fa fa-credit-card"></i> Rent Payment
+</a>
+
+<a href="{% url 'maintenance' %}">
+<i class="fa fa-tools"></i> Maintenance
+</a>
+
+<a href="{% url 'complaints' %}">
+<i class="fa fa-exclamation-circle"></i> Complaints
+</a>
+
+<a href="{% url 'complaint_list' %}">
+<i class="fa fa-list"></i> Complaint History
+</a>
+
+<a href="{% url 'history' %}">
+<i class="fa fa-history"></i> Payment History
+</a>
+
+<a href="{% url 'profile' %}">
+<i class="fa fa-user"></i> Profile
+</a>
+
+</div>
+
+
+
+<div class="topbar">
+
+<div class="title">
+Rent Payment
+</div>
+
+<div class="user">
+{{ request.user.username|first|upper }}
+</div>
+
+</div>
+
+
+
+<div class="page">
+
+<div class="card">
+
+<h3>Pay Monthly Rent</h3>
+
+
+<form method="POST">
+
+{% csrf_token %}
+
+
+<label>Amount (£)</label>
+
+<input type="number"
+name="amount"
+value="{{ rent_amount }}">
+
+
+<label>Payment Method</label>
+
+<div class="methods">
+
+<div class="method active"
+onclick="selectMethod('card', this)">
+💳 Card
+</div>
+
+<div class="method"
+onclick="selectMethod('bank', this)">
+🏦 Bank
+</div>
+
+</div>
+
+
+<input type="hidden"
+name="payment_type"
+id="payment_type"
+value="card">
+
+
+<select name="method">
+
+<option>Credit Card</option>
+<option>Debit Card</option>
+<option>Net Banking</option>
+
+</select>
+
+
+<button type="submit">
+Pay Now
+</button>
+
+
+</form>
+
+</div>
+
+</div>
+
+
+
+<script>
+
+function selectMethod(type, element){
+
+document.getElementById("payment_type").value = type;
+
+document.querySelectorAll(".method").forEach(btn=>{
+btn.classList.remove("active");
+});
+
+element.classList.add("active");
+
+}
+
+</script>
+
+
+</body>
+
+</html>

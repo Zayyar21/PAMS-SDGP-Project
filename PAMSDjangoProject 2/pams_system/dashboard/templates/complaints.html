@@ -1,0 +1,466 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Submit Complaint</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+/* layout */
+
+body{
+margin:0;
+font-family:Segoe UI;
+background:#f1f5f9;
+display:flex;
+}
+
+/* sidebar */
+
+.sidebar{
+width:230px;
+background:#0f172a;
+color:white;
+height:100vh;
+position:fixed;
+padding-top:20px;
+}
+
+.logo{
+font-size:20px;
+font-weight:bold;
+padding:15px;
+}
+
+.menu{
+padding:10px;
+}
+
+.menu a{
+display:block;
+color:#cbd5e1;
+padding:12px;
+text-decoration:none;
+border-radius:8px;
+margin-bottom:5px;
+}
+
+.menu a:hover{
+background:#1e293b;
+color:white;
+}
+
+.active{
+background:#2563eb;
+color:white !important;
+}
+
+/* main content */
+
+.content{
+margin-left:240px;
+padding:40px;
+width:100%;
+}
+
+/* grid */
+
+.container{
+display:grid;
+grid-template-columns:1fr 380px;
+gap:40px;
+}
+
+/* cards */
+
+.card{
+background:white;
+padding:25px;
+border-radius:14px;
+box-shadow:0 4px 12px rgba(0,0,0,0.05);
+margin-bottom:25px;
+}
+
+/* headings */
+
+.title{
+font-size:30px;
+font-weight:600;
+}
+
+.subtitle{
+color:#64748b;
+margin-bottom:25px;
+}
+
+/* tips */
+
+.tips{
+background:#f8fafc;
+padding:15px;
+border-radius:10px;
+margin-bottom:20px;
+}
+
+/* form */
+
+label{
+display:block;
+margin-top:15px;
+margin-bottom:5px;
+font-weight:500;
+}
+
+select, textarea{
+width:100%;
+padding:10px;
+border-radius:8px;
+border:1px solid #cbd5e1;
+}
+
+textarea{
+min-height:120px;
+resize:none;
+}
+
+.counter{
+text-align:right;
+font-size:12px;
+color:#64748b;
+}
+
+button{
+margin-top:20px;
+width:100%;
+padding:12px;
+border:none;
+background:#2563eb;
+color:white;
+border-radius:8px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1d4ed8;
+}
+
+/* complaint list */
+
+.complaint-box{
+border:1px solid #e2e8f0;
+padding:15px;
+border-radius:10px;
+margin-top:15px;
+background:#f8fafc;
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+margin-bottom:6px;
+}
+
+/* status colors */
+
+.status{
+padding:3px 10px;
+border-radius:20px;
+font-size:12px;
+color:white;
+}
+
+.Pending{
+background:#f59e0b;
+}
+
+.Resolved{
+background:#10b981;
+}
+
+.reply{
+margin-top:8px;
+padding:8px;
+background:white;
+border-radius:6px;
+font-size:13px;
+border:1px solid #e2e8f0;
+}
+
+.date{
+font-size:12px;
+color:#64748b;
+margin-top:6px;
+}
+
+/* responsive */
+
+@media(max-width:900px){
+
+.sidebar{
+position:relative;
+width:100%;
+height:auto;
+}
+
+.content{
+margin-left:0;
+}
+
+.container{
+grid-template-columns:1fr;
+}
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<div class="logo">
+🏢 PAMS
+</div>
+
+<div class="menu">
+
+<a href="/dashboard/">Dashboard</a>
+
+<a href="/rent/">Rent Payment</a>
+
+<a href="/maintenance/">Maintenance</a>
+
+<a class="active" href="/complaints/">Complaints</a>
+
+<a href="/history/">Payment History</a>
+
+<a href="/profile/">Profile</a>
+
+</div>
+
+</div>
+
+
+<!-- CONTENT -->
+
+<div class="content">
+
+<div class="container">
+
+
+<!-- LEFT SIDE -->
+
+<div>
+
+<div class="title">
+Submit Complaint
+</div>
+
+<div class="subtitle">
+Report any issue in your apartment. Management will respond quickly.
+</div>
+
+
+<div class="card">
+
+<h3>Why submit complaint?</h3>
+
+<ul>
+
+<li>Track issue progress</li>
+
+<li>Get faster support</li>
+
+<li>Improve living quality</li>
+
+<li>Keep record of problems</li>
+
+</ul>
+
+</div>
+
+
+<!-- MY COMPLAINTS -->
+
+<div class="card">
+
+<h3>My Complaints</h3>
+
+{% for c in complaints %}
+
+<div class="complaint-box">
+
+<div class="row">
+
+<b>{{ c.category }}</b>
+
+<span class="status {{ c.status|cut:' ' }}">
+{{ c.status }}
+</span>
+
+</div>
+
+<div>
+
+{{ c.message }}
+
+</div>
+
+
+{% if c.reply %}
+
+<div class="reply">
+
+Admin Reply: {{ c.reply }}
+
+</div>
+
+{% endif %}
+
+
+<div class="date">
+
+{{ c.date|date:"d M Y H:i" }}
+
+</div>
+
+</div>
+
+{% empty %}
+
+<p>No complaints submitted yet</p>
+
+{% endfor %}
+
+</div>
+
+
+</div>
+
+
+<!-- RIGHT SIDE FORM -->
+
+<div class="card">
+
+<div class="tips">
+
+<h4>Tips</h4>
+
+<ul>
+
+<li>Explain problem clearly</li>
+
+<li>Mention room or location</li>
+
+<li>Select correct priority</li>
+
+</ul>
+
+</div>
+
+
+<form method="post">
+
+{% csrf_token %}
+
+
+<label>Category</label>
+
+<select name="category" required>
+
+<option value="">Select category</option>
+
+<option>Electrical</option>
+
+<option>Maintenance</option>
+
+<option>Noise</option>
+
+<option>Billing</option>
+
+<option>Neighbour</option>
+
+<option>Other</option>
+
+</select>
+
+
+
+<label>Priority</label>
+
+<select name="priority">
+
+<option>Low</option>
+
+<option>Medium</option>
+
+<option>High</option>
+
+</select>
+
+
+
+<label>Complaint Details</label>
+
+<textarea
+name="message"
+maxlength="300"
+placeholder="Describe issue..."
+oninput="countChars(this)"
+required>
+</textarea>
+
+
+<div class="counter">
+
+<span id="count">0</span>/300
+
+</div>
+
+
+<button>
+Submit Complaint
+</button>
+
+
+</form>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+function countChars(x){
+
+document.getElementById("count").innerText = x.value.length;
+
+}
+
+</script>
+
+
+
+</body>
+
+</html>

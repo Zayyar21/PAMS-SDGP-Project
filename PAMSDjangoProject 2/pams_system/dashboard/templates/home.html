@@ -1,0 +1,499 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>PAMS Dashboard</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+:root{
+--primary:#2563eb;
+--bg:#f1f5f9;
+--card:white;
+--text:#0f172a;
+}
+
+.dark{
+--bg:#0f172a;
+--card:#1e293b;
+--text:#e2e8f0;
+}
+
+body{
+margin:0;
+font-family:Segoe UI;
+background:var(--bg);
+color:var(--text);
+display:flex;
+transition:.3s;
+}
+
+/* sidebar */
+
+.sidebar{
+width:240px;
+background:#0f172a;
+color:white;
+height:100vh;
+position:fixed;
+}
+
+.sidebar h2{
+padding:20px;
+text-align:center;
+}
+
+.sidebar a{
+display:flex;
+align-items:center;
+gap:10px;
+padding:14px 20px;
+color:#cbd5e1;
+text-decoration:none;
+transition:.3s;
+}
+
+.sidebar a:hover{
+background:var(--primary);
+color:white;
+}
+
+.active{
+background:var(--primary);
+}
+
+/* content */
+
+.content{
+margin-left:240px;
+padding:25px;
+width:100%;
+}
+
+/* header */
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:15px;
+}
+
+.search{
+padding:8px 12px;
+border-radius:6px;
+border:1px solid #ccc;
+width:220px;
+}
+
+/* profile */
+
+.profile{
+display:flex;
+align-items:center;
+gap:15px;
+position:relative;
+}
+
+.profile img{
+width:40px;
+height:40px;
+border-radius:50%;
+cursor:pointer;
+}
+
+/* dropdown */
+
+.dropdown{
+display:none;
+position:absolute;
+top:60px;
+right:0;
+background:var(--card);
+padding:10px;
+border-radius:8px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+
+/* bell */
+
+.bell{
+cursor:pointer;
+position:relative;
+font-size:20px;
+}
+
+.badge{
+position:absolute;
+top:-6px;
+right:-8px;
+background:red;
+color:white;
+font-size:11px;
+padding:2px 6px;
+border-radius:50%;
+}
+
+/* notifications */
+
+.notifications{
+display:none;
+position:absolute;
+right:0;
+top:60px;
+background:var(--card);
+width:280px;
+padding:15px;
+border-radius:10px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+max-height:300px;
+overflow-y:auto;
+}
+
+.notifications p{
+font-size:14px;
+margin-bottom:8px;
+padding-bottom:6px;
+border-bottom:1px solid #eee;
+}
+
+/* cards */
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+margin-top:20px;
+}
+
+.card{
+background:var(--card);
+padding:20px;
+border-radius:12px;
+box-shadow:0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* maintenance colours */
+
+.priority-high{
+color:#dc2626;
+font-weight:bold;
+}
+
+.priority-medium{
+color:#f59e0b;
+font-weight:bold;
+}
+
+.priority-low{
+color:#16a34a;
+font-weight:bold;
+}
+
+/* button */
+
+.btn{
+background:var(--primary);
+color:white;
+padding:10px 15px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+/* responsive */
+
+@media(max-width:800px){
+
+.sidebar{
+width:100%;
+height:auto;
+position:relative;
+}
+
+.content{
+margin-left:0;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<h2>🏢 PAMS</h2>
+
+<a class="active" href="{% url 'home' %}">
+<i class="fa fa-home"></i> Dashboard
+</a>
+
+<a href="{% url 'rent' %}">
+<i class="fa fa-credit-card"></i> Rent
+</a>
+
+<a href="{% url 'maintenance' %}">
+<i class="fa fa-tools"></i> Maintenance
+</a>
+
+<a href="{% url 'complaints' %}">
+<i class="fa fa-exclamation-circle"></i> Complaints
+</a>
+
+<a href="{% url 'history' %}">
+<i class="fa fa-clock"></i> History
+</a>
+
+<a href="{% url 'profile' %}">
+<i class="fa fa-user"></i> Profile
+</a>
+
+</div>
+
+
+<!-- CONTENT -->
+
+<div class="content">
+
+<div class="header">
+
+<h2>Welcome {{ request.user.username }} 👋</h2>
+
+<input class="search" placeholder="Search dashboard...">
+
+<div class="profile">
+
+<button class="btn" onclick="toggleDark()">🌙</button>
+
+
+<!-- BELL -->
+
+<div class="bell" onclick="toggleNotif()">
+
+<i class="fa fa-bell"></i>
+
+{% if notifications %}
+<span class="badge">{{ notifications|length }}</span>
+{% endif %}
+
+</div>
+
+
+<!-- NOTIFICATION DROPDOWN -->
+
+<div class="notifications" id="notif">
+
+{% if notifications %}
+
+{% for note in notifications %}
+
+<p>🔔 {{ note }}</p>
+
+{% endfor %}
+
+{% else %}
+
+<p>✅ No new notifications</p>
+
+{% endif %}
+
+</div>
+
+
+<!-- PROFILE IMAGE -->
+
+<img onclick="toggleMenu()" src="
+{% if request.user.profile.photo %}
+{{ request.user.profile.photo.url }}
+{% else %}
+{% static 'profile.png' %}
+{% endif %}
+">
+
+
+<div class="dropdown" id="menu">
+
+<a href="{% url 'profile' %}">Profile</a>
+
+<form method="post" action="{% url 'logout' %}">
+{% csrf_token %}
+<button class="btn" style="background:#ef4444;width:100%">
+Logout
+</button>
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- DASHBOARD CARDS -->
+
+<div class="grid">
+
+<div class="card">
+<i class="fa fa-tools"></i>
+<h2>{{ maintenance_count }}</h2>
+Active Requests
+</div>
+
+<div class="card">
+<i class="fa fa-pound-sign"></i>
+<h2>£{{ rent_due }}</h2>
+Rent Due
+</div>
+
+<div class="card">
+<i class="fa fa-exclamation"></i>
+<h2>{{ complaint_count }}</h2>
+Complaints
+</div>
+
+</div>
+
+
+<!-- MAINTENANCE PRIORITY -->
+
+<div class="card">
+
+<h3>Maintenance Priority</h3>
+
+<p>
+<span class="priority-high">🔴 High:</span>
+{{ maintenance_high|default:0 }}
+</p>
+
+<p>
+<span class="priority-medium">🟡 Medium:</span>
+{{ maintenance_medium|default:0 }}
+</p>
+
+<p>
+<span class="priority-low">🟢 Low:</span>
+{{ maintenance_low|default:0 }}
+</p>
+
+</div>
+
+
+<!-- MONTHLY PAYMENTS CHART -->
+
+<div class="card">
+
+<h3>Monthly Payments</h3>
+
+<canvas id="paymentChart"></canvas>
+
+</div>
+
+
+<!-- TENANT VS NEIGHBOURS -->
+
+<div class="card">
+
+<h3>Tenant vs Neighbours Payment Comparison</h3>
+
+<canvas id="compareChart"></canvas>
+
+</div>
+
+
+<script>
+
+function toggleMenu(){
+
+menu.style.display =
+menu.style.display=="block"?"none":"block"
+
+}
+
+function toggleNotif(){
+
+notif.style.display =
+notif.style.display=="block"?"none":"block"
+
+}
+
+function toggleDark(){
+
+document.body.classList.toggle("dark")
+
+}
+
+
+/* monthly payments */
+
+new Chart(document.getElementById("paymentChart"),{
+
+type:"bar",
+
+data:{
+
+labels: {{ months|safe }},
+
+datasets:[{
+
+label:"Monthly Rent (£)",
+
+data: {{ monthly_amounts|safe }}
+
+}]
+
+}
+
+})
+
+
+/* tenant vs neighbours */
+
+new Chart(document.getElementById("compareChart"),{
+
+type:"bar",
+
+data:{
+
+labels: {{ neighbour_names|safe }},
+
+datasets:[
+
+{
+label:"Neighbours (£)",
+data: {{ neighbour_payments|safe }}
+},
+
+{
+label:"You (£)",
+data: {{ tenant_payment_total|safe }}
+}
+
+]
+
+}
+
+})
+
+</script>
+
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>PAMS Register</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+body{
+margin:0;
+font-family:Segoe UI, Arial;
+background:linear-gradient(135deg,#1e3a8a,#2563eb);
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+/* card */
+
+.card{
+background:white;
+padding:45px 40px;
+width:420px;
+border-radius:14px;
+box-shadow:0 20px 40px rgba(0,0,0,0.15);
+}
+
+/* title */
+
+.title{
+font-size:24px;
+font-weight:bold;
+color:#2563eb;
+margin-bottom:5px;
+text-align:center;
+}
+
+.subtitle{
+text-align:center;
+font-size:14px;
+color:#64748b;
+margin-bottom:25px;
+}
+
+/* labels */
+
+label{
+font-size:13px;
+color:#475569;
+display:block;
+margin-bottom:6px;
+margin-top:14px;
+font-weight:500;
+}
+
+/* input group */
+
+.input-group{
+position:relative;
+}
+
+/* icons */
+
+.icon{
+position:absolute;
+left:14px;
+top:50%;
+transform:translateY(-50%);
+color:#64748b;
+font-size:14px;
+}
+
+/* inputs */
+
+input{
+width:100%;
+padding:14px 14px 14px 42px;
+border-radius:10px;
+border:1px solid #d1d5db;
+font-size:14px;
+box-sizing:border-box;
+transition:0.2s;
+background:#f8fafc;
+margin-bottom:8px;
+}
+
+input:focus{
+border-color:#2563eb;
+background:white;
+outline:none;
+box-shadow:0 0 0 3px rgba(37,99,235,0.12);
+}
+
+/* button */
+
+button{
+width:100%;
+padding:14px;
+border:none;
+background:#2563eb;
+color:white;
+font-size:15px;
+border-radius:10px;
+cursor:pointer;
+margin-top:18px;
+font-weight:500;
+}
+
+button:hover{
+background:#1d4ed8;
+}
+
+/* footer link */
+
+.login-link{
+text-align:center;
+margin-top:18px;
+font-size:14px;
+}
+
+.login-link a{
+color:#2563eb;
+text-decoration:none;
+font-weight:500;
+}
+
+/* error */
+
+.error{
+color:red;
+font-size:13px;
+margin-bottom:15px;
+text-align:center;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<div class="title">
+<i class="fa fa-building"></i> PAMS
+</div>
+
+<div class="subtitle">
+Create Tenant Account
+</div>
+
+
+{% if form.errors %}
+<div class="error">
+
+{% for field in form %}
+{% for error in field.errors %}
+<p>{{ error }}</p>
+{% endfor %}
+{% endfor %}
+
+{% for error in form.non_field_errors %}
+<p>{{ error }}</p>
+{% endfor %}
+
+</div>
+{% endif %}
+
+
+<form method="POST">
+
+{% csrf_token %}
+
+
+<label>Username</label>
+
+<div class="input-group">
+<i class="fa fa-user icon"></i>
+
+<input
+type="text"
+name="username"
+placeholder="Enter username"
+required>
+
+</div>
+
+
+
+<label>Password</label>
+
+<div class="input-group">
+<i class="fa fa-lock icon"></i>
+
+<input
+type="password"
+name="password1"
+placeholder="Enter password"
+required>
+
+</div>
+
+
+
+<label>Confirm Password</label>
+
+<div class="input-group">
+<i class="fa fa-lock icon"></i>
+
+<input
+type="password"
+name="password2"
+placeholder="Confirm password"
+required>
+
+</div>
+
+
+
+<button type="submit">
+Register
+</button>
+
+
+</form>
+
+
+<div class="login-link">
+
+Already have account?
+
+<a href="{% url 'login' %}">
+Login
+</a>
+
+</div>
+
+
+</div>
+
+</body>
+
+</html>

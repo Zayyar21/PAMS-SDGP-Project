@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Payment History</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body{
+margin:0;
+font-family:Segoe UI, Arial;
+background:#f1f5f9;
+display:flex;
+}
+
+/* sidebar */
+
+.sidebar{
+
+width:230px;
+height:100vh;
+background:linear-gradient(180deg,#0f172a,#1e293b);
+color:white;
+position:fixed;
+padding:25px 20px;
+
+}
+
+.sidebar h2{
+
+margin-bottom:35px;
+font-size:22px;
+
+}
+
+.sidebar a{
+
+display:flex;
+align-items:center;
+gap:10px;
+color:#cbd5f1;
+text-decoration:none;
+padding:10px 12px;
+border-radius:8px;
+margin-bottom:8px;
+transition:.2s;
+
+}
+
+.sidebar a:hover{
+
+background:#2563eb;
+color:white;
+
+}
+
+.sidebar i{
+
+width:18px;
+
+}
+
+
+/* main */
+
+.main{
+
+margin-left:250px;
+padding:40px;
+width:100%;
+
+}
+
+.page-title{
+
+font-size:24px;
+margin-bottom:20px;
+color:#0f172a;
+
+}
+
+
+/* card */
+
+.card{
+
+background:white;
+padding:25px;
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+margin-bottom:25px;
+
+}
+
+
+/* chart */
+
+.chart-container{
+
+height:320px;
+
+}
+
+
+/* table */
+
+table{
+
+width:100%;
+border-collapse:collapse;
+
+}
+
+th{
+
+text-align:left;
+background:#f8fafc;
+padding:14px;
+font-size:14px;
+color:#475569;
+border-bottom:2px solid #e2e8f0;
+
+}
+
+td{
+
+padding:14px;
+border-bottom:1px solid #e2e8f0;
+font-size:14px;
+color:#334155;
+
+}
+
+tr:hover{
+
+background:#f8fafc;
+
+}
+
+
+/* badges */
+
+.badge{
+
+padding:6px 12px;
+border-radius:20px;
+font-size:12px;
+font-weight:500;
+
+}
+
+.paid{
+
+background:#dcfce7;
+color:#166534;
+
+}
+
+.pending{
+
+background:#fef3c7;
+color:#92400e;
+
+}
+
+
+/* button */
+
+.download-btn{
+
+background:#2563eb;
+color:white;
+padding:7px 14px;
+border-radius:6px;
+text-decoration:none;
+font-size:13px;
+transition:.2s;
+
+}
+
+.download-btn:hover{
+
+background:#1d4ed8;
+
+}
+
+
+/* header row */
+
+.table-header{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:15px;
+
+}
+
+.total-box{
+
+background:#eff6ff;
+padding:10px 15px;
+border-radius:8px;
+font-size:14px;
+color:#1e40af;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<div class="sidebar">
+
+<h2>🏢 PAMS</h2>
+
+<a href="{% url 'home' %}">
+<i class="fa-solid fa-house"></i> Dashboard
+</a>
+
+<a href="{% url 'rent' %}">
+<i class="fa-solid fa-credit-card"></i> Rent Payment
+</a>
+
+<a href="{% url 'maintenance' %}">
+<i class="fa-solid fa-screwdriver-wrench"></i> Maintenance
+</a>
+
+<a href="{% url 'complaints' %}">
+<i class="fa-solid fa-circle-exclamation"></i> Complaints
+</a>
+
+<a href="{% url 'complaint_list' %}">
+<i class="fa-solid fa-list"></i> Complaint History
+</a>
+
+<a href="{% url 'history' %}">
+<i class="fa-solid fa-clock-rotate-left"></i> Payment History
+</a>
+
+<a href="{% url 'profile' %}">
+<i class="fa-solid fa-user"></i> Profile
+</a>
+
+</div>
+
+
+
+<div class="main">
+
+
+<div class="table-header">
+
+<h2 class="page-title">Payment History</h2>
+
+<div class="total-box">
+Total Payments: {{ payments|length }}
+</div>
+
+</div>
+
+
+
+<!-- CHART CARD -->
+
+<div class="card">
+
+<h3>Monthly Payment History</h3>
+
+<div class="chart-container">
+
+<canvas id="paymentHistoryChart"></canvas>
+
+</div>
+
+</div>
+
+
+
+<!-- TABLE CARD -->
+
+<div class="card">
+
+<table>
+
+<tr>
+
+<th>Date</th>
+
+<th>Amount</th>
+
+<th>Method</th>
+
+<th>Status</th>
+
+<th>Receipt</th>
+
+</tr>
+
+
+{% for payment in payments %}
+
+<tr>
+
+<td>{{ payment.date }}</td>
+
+<td><strong>£{{ payment.amount }}</strong></td>
+
+<td>{{ payment.method }}</td>
+
+<td>
+
+{% if payment.status == "Paid" %}
+
+<span class="badge paid">
+<i class="fa fa-check-circle"></i> Paid
+</span>
+
+{% else %}
+
+<span class="badge pending">
+<i class="fa fa-clock"></i> Pending
+</span>
+
+{% endif %}
+
+</td>
+
+
+<td>
+
+<a href="{% url 'download_receipt' payment.id %}" class="download-btn">
+
+<i class="fa fa-download"></i> Receipt
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+
+</table>
+
+</div>
+
+</div>
+
+
+
+<script>
+
+const months = {{ months|safe }};
+const monthlyAmounts = {{ monthly_amounts|safe }};
+
+new Chart(document.getElementById("paymentHistoryChart"), {
+
+type: "bar",
+
+data: {
+
+labels: months,
+
+datasets: [{
+
+label: "Monthly Payments (£)",
+
+data: monthlyAmounts
+
+}]
+
+},
+
+options: {
+
+responsive: true,
+
+scales: {
+
+y: {
+
+beginAtZero: true
+
+}
+
+}
+
+}
+
+});
+
+</script>
+
+
+</body>
+
+</html>
